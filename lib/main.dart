@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/screens/order_screen.dart';
+import './providers/cart.dart';
+import './providers/orders.dart';
+import './screens/cart_screen.dart';
 
 import 'providers/products_provider.dart';
 import 'screens/detail_screen_product.dart';
@@ -15,29 +19,43 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context)=> Products(),
-          child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'MyShop',
-        
-        theme: ThemeData(
-          
-          primaryColor: HexColor("#ff6501"),
-          accentColor: Colors.deepOrange,
-          fontFamily: 'Lato'
-          
-          
-
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+        create: (context)=> Products(),
         ),
-        //home: ProductOverviewScreen(),
-        routes: {
-
-          "/":(context)=>ProductOverviewScreen(),
-          DetailScreenProduct.routename:(context)=>DetailScreenProduct(),
+        ChangeNotifierProvider(
+        create: (context)=> Cart(),
+        ),
+        ChangeNotifierProvider(
+          create: (context)=>Orders(),
+        )
+      ],
+        
+            child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'MyShop',
           
-                },
-      ),
+          theme: ThemeData(
+            
+            primaryColor: HexColor("#ff6501"),
+            accentColor: Colors.deepOrange,
+            fontFamily: 'Lato'
+            
+            
+
+          ),
+          //home: ProductOverviewScreen(),
+          routes: {
+
+            "/":(context)=>ProductOverviewScreen(),
+            DetailScreenProduct.routename:(context)=>DetailScreenProduct(),
+            CartScreen.routename :(context)=>CartScreen(),
+            OrderScreen.routename:(context)=>OrderScreen(),
+            
+                  },
+        ),
+      
     );
   }
 }

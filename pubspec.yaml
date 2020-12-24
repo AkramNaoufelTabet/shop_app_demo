@@ -23,6 +23,7 @@ environment:
 dependencies:
   hexcolor: ^1.0.4
   provider: ^4.0.0
+  intl: ^0.15.8
   flutter:
     sdk: flutter
 
