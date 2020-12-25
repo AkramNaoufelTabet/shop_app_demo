@@ -45,11 +45,26 @@ class Products with ChangeNotifier{
   return items.where((product) => product.isFavourite).toList();
 }
   Product findById(String id){
+    
     return _items.firstWhere((prod) => prod.id==id);
+  }
+
+  void updateProduct(String productId,title,desc,imageUrl ,double price){
+    var product=_items.firstWhere((product) => product.id==productId);
+    product.title=title;
+    product.price=price;
+    product.description=desc;
+    product.imageUrl=imageUrl;
+    notifyListeners();
+    
   }
   void addProduct(){
     //_items.add(value);
     notifyListeners();
+  }
+  void deleteProduct(String id){
+      _items.removeWhere((product) => product.id==id);
+      notifyListeners();
   }
 
 }
