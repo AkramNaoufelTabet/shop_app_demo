@@ -24,6 +24,7 @@ dependencies:
   hexcolor: ^1.0.4
   provider: ^4.0.0
   intl: ^0.15.8
+  http: ^0.12.2
   flutter:
     sdk: flutter
 

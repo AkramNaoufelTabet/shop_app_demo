@@ -1,10 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shop_app/models/product.dart';
+import 'package:http/http.dart' as http;
 
-
-class Products with ChangeNotifier{
-
-  List<Product> _items=[
+class Products with ChangeNotifier {
+  List<Product> _items = [
     Product(
       id: 'p1',
       title: 'Red Shirt',
@@ -38,33 +39,63 @@ class Products with ChangeNotifier{
           'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
     ),
   ];
-  List<Product> get items{
+  List<Product> get items {
     return [..._items];
   }
-  List<Product> get favouritesOnly{
-  return items.where((product) => product.isFavourite).toList();
-}
-  Product findById(String id){
-    
-    return _items.firstWhere((prod) => prod.id==id);
+
+  List<Product> get favouritesOnly {
+    return items.where((product) => product.isFavourite).toList();
   }
 
-  void updateProduct(String productId,title,desc,imageUrl ,double price){
-    var product=_items.firstWhere((product) => product.id==productId);
-    product.title=title;
-    product.price=price;
-    product.description=desc;
-    product.imageUrl=imageUrl;
-    notifyListeners();
-    
+  Product findById(String id) {
+    return _items.firstWhere((prod) => prod.id == id);
   }
-  void addProduct(){
-    //_items.add(value);
+
+  void updateProduct(String productId, title, desc, imageUrl, double price) {
+    var product = _items.firstWhere((product) => product.id == productId);
+    product.title = title;
+    product.price = price;
+    product.description = desc;
+    product.imageUrl = imageUrl;
     notifyListeners();
   }
-  void deleteProduct(String id){
-      _items.removeWhere((product) => product.id==id);
+
+  Future<void> addProduct(Product p) async {
+    const url =
+        "https://shopapp-2bf63-default-rtdb.firebaseio.com/products";
+ try{
+final response= await http
+        .post(url,
+            body: json.encode({
+              'title': p.title,
+              'price': p.price,
+              'description': p.description,
+              'imageURL': p.imageUrl,
+              'isFavourite': p.isFavourite
+            }));
+              final newProduct = Product(
+        id: json.decode(response.body)["name"],
+        description: p.description,
+        price: p.price,
+        imageUrl: p.imageUrl,
+        title: p.title,
+      );
+      _items.add(newProduct);
       notifyListeners();
+ }catch(error){
+   print(error);
+   throw error;
+ }
+  
+       
+    
+    
+
+   
   }
 
+  void deleteProduct(String id) {
+    _items.removeWhere((product) => product.id == id);
+    notifyListeners();
+  }
 }
