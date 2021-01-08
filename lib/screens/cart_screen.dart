@@ -37,19 +37,7 @@ class CartScreen extends StatelessWidget {
                                 .color)),
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  FlatButton(
-                    child: Text(
-                      'Order now',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    onPressed: () {
-                      Provider.of<Orders>(context,listen: false).addOrders(
-                          cartData.items.values.toList(), cartData.totalAmount);
-                          cartData.clear();
-                     //     Navigator.of(context).pushNamed(OrderScreen.routename);
-                    },
-                    textColor: Theme.of(context).primaryColor,
-                  ),
+                  OrderButton(cartData: cartData),
                 ],
               ),
             ),
@@ -71,6 +59,50 @@ class CartScreen extends StatelessWidget {
                   })),
         ],
       ),
+    );
+  }
+}
+
+class OrderButton extends StatefulWidget {
+  const OrderButton({
+    Key key,
+    @required this.cartData,
+  }) : super(key: key);
+
+  final Cart cartData;
+
+  @override
+  _OrderButtonState createState() => _OrderButtonState();
+}
+
+class _OrderButtonState extends State<OrderButton> {
+  var _isLoading=false;
+  @override
+  Widget build(BuildContext context) {
+    return Builder(
+      builder: (BuildContext context){
+         BuildContext rootContext = context;
+         return FlatButton(
+        child:  _isLoading ? CircularProgressIndicator(): Text(
+          'Order now',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        onPressed: (widget.cartData.totalAmount<=0 || _isLoading) ? null :  ()async {
+          setState(() {
+            _isLoading=true;
+          });
+         await Provider.of<Orders>(rootContext,listen: false).addOrders(
+              widget.cartData.items.values.toList(), widget.cartData.totalAmount);
+                setState(() {
+            _isLoading=false;
+          });
+              widget.cartData.clear();
+         //     Navigator.of(context).pushNamed(OrderScreen.routename);
+        },
+        textColor: Theme.of(context).primaryColor,
+      );
+      },
+          
     );
   }
 }

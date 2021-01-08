@@ -51,12 +51,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
       isLoading = true;
     });
     if (productId != null) {
-      productData.updateProduct(
-          product.id, _title, _desciption, _imageUrl, _price);
-      setState(() {
-        isLoading = false;
-      });
-      Navigator.of(context).pop();
+      await productData
+          .updateProduct(product.id, _title, _desciption, _imageUrl, _price,
+              product.isFavourite);
     } else {
       try {
         var product = Product(
@@ -65,7 +62,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
             price: _price,
             description: _desciption,
             imageUrl: _imageUrl);
-         await productData.addProduct(product);
+        await productData.addProduct(product);
       } catch (error) {
         await showDialog(
             context: context,
@@ -84,13 +81,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 ],
               );
             });
-      } finally {
-        setState(() {
+      } 
+       
+    }
+    setState(() {
           isLoading = false;
         });
         Navigator.of(context).pop();
-      }
-    }
   }
 
   @override

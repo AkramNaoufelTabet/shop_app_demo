@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/providers/auth.dart';
 import '../models/product.dart';
 import '../providers/cart.dart';
 import '../screens/detail_screen_product.dart';
@@ -9,6 +10,7 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context, listen: false);
     final cartData = Provider.of<Cart>(context, listen: false);
+    final auth=Provider.of<Auth>(context,listen: false);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GestureDetector(
@@ -16,10 +18,15 @@ class ProductItem extends StatelessWidget {
           Navigator.of(context)
               .pushNamed(DetailScreenProduct.routename, arguments: product.id);
         },
-        child: GridTile(
-          child: Image.network(
-            product.imageUrl,
-            fit: BoxFit.cover,
+        child: GridTile( 
+          child: Hero( 
+            tag: product.id,
+                      child: FadeInImage(
+
+            placeholder:AssetImage('assets/images/product-placeholder.png') ,
+            image: NetworkImage(product.imageUrl),
+              fit: BoxFit.cover,
+            ),
           ),
           footer: GridTileBar(
             subtitle: Text(
@@ -37,8 +44,8 @@ class ProductItem extends StatelessWidget {
                   product.isFavourite ? Icons.favorite : Icons.favorite_border,
                   color: Theme.of(context).accentColor,
                 ),
-                onPressed: () {
-                  product.toggleProductFavStatus();
+                onPressed: () async {
+                product.toggleProductFavStatus(auth.token,auth.userId);
                 },
               ),
             ),
